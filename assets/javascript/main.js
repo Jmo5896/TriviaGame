@@ -9,6 +9,8 @@
 // Don't forget to include a countdown timer.
 
 var timerID;
+
+var count = 0;
 var questions = [
     {
         question: 'question 1?',
@@ -20,7 +22,7 @@ var questions = [
     {
         question: 'question 2?',
         choices: [
-            'a', 'b', 'c', 'd'
+            '1', '2', '3', '4'
         ],
         answerIndex: 2
     },
@@ -32,35 +34,67 @@ var questions = [
         answerIndex: 0
     }
 ];
+var currentQuestion;
+var currentChoices;
+//start button
+$('.startButton').on('click', startGame);
 
 function startGame() {
     //TODO: loop thru array of questions 
-        for (var i = 0; i < questions.length; i++) {
+    timerID = setInterval(nextQuestion, 1000*11);
         //call showQuestion function and pass it the questions and choices from the current 
         //object that is being iterrated
-            var currentQuestion = questions[i].question,
-            var currentChoices =
-            showQuestion(questions[i].question, questions[i].choices )
-            console.log(questions[i].question);
-            console.log(questions[i].choices);
             
-        }
     //TODO: start the timer and assign it to timerID
-    timerID = setInterval(startGame, 1000 * 5);
-    console.log(timerID);
+    //stack overflow, it works
+    function startTimer(duration, display) {
+        var timer = duration, minutes, seconds;
+        setInterval(function () {
+            seconds = parseInt(timer % 60, 10);
+    
+            seconds = seconds < 10 ? "0" + seconds : seconds;
+    
+            display.text(seconds);
+    
+            if (--timer < 0) {
+                timer = duration;
+            }
+        }, 1000);
+    }
+    
+    jQuery(function ($) {
+        var thirtySeconds = 10,
+            display = $('.displayTimer');
+        startTimer(thirtySeconds, display);
+    });
+    
 }
-startGame();
 
 function showQuestion(question, choices) {
     //TODO: use jquery to create a question div, a <p> for the question and radio buttons for 
     //the choices
-    var newDivForQuestions = $('<div>');
-    var choiceButtons = $('<button>');
-
+    var newPForQuestions = $('<p>');
+    $('#showChoices').text('');
+    for (var i = 0; i < questions[count].choices.length; i++ ) {
+       
+        $('#showChoices').append('<button value = "' + i + '" class = "buttons">' + questions[count].choices[i] + '</button><br>');
+    }
     //TODO: after above is finished append question div to the html
-    $('#showQuestion').text(newDivForQuestions + question);
-    $('#showChoices').text(choiceButtons + choices);
+    $('#showQuestion').text(questions[count].question);
+    
 }
+
+function nextQuestion() {
+    //  TODO: Increment the count by 1.
+  if (count + 1 < questions.length) {
+    //   clearTimeout(nextQuestion);
+    count++;
+    
+    // TODO: Use a setTimeout to run displayImage after 1 second.
+    setTimeout(showQuestion(questions[count].question, questions[count].choices), 1000*5);
+  }
+}
+showQuestion(questions[count].question, questions[count].choices);
 
 //TODO: click event handler for submit button
     // loop thru all the questions in the html using jquery
@@ -69,9 +103,17 @@ function showQuestion(question, choices) {
 
     //TODO: compare the lenghth of the userChoices array to the length of the questions array
     //loop thru all user choices array compare each value to the questions array
-    // var answerIndex = question[0].answerIndex;
-    // if (questions[0].choices[answerIndex] === userChoices[0]) {
-    //     //TODO: thisIsACorrectAnswer
-    // } else {
-    //     // this is incorrect answer
-    // }
+    var answerIndex = questions[count].answerIndex;
+    $('.buttons').on('click', function() {
+        answerIndex = this.value
+       console.log(answerIndex);
+   })
+    
+    
+    if (questions[count].choices[answerIndex] === answerIndex) {
+        //TODO: thisIsACorrectAnswer
+        alert('correct');
+    } else {
+        // this is incorrect answer
+        alert('incorrect');
+    }
